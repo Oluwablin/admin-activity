@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\v1\API\Admin\Activity\ActivityController;
 use App\Http\Controllers\v1\API\Admin\Auth\AuthController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,12 @@ use App\Http\Controllers\v1\API\Admin\Auth\AuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+// Log out anyone being admin or user
+Route::post('v1/auth/logout', function (Request $request) {
+    $request->user()->tokens()->delete();
+    return response()->json(['status' => 'OK', 'message' => 'Logout successfully'], 200);
+})->middleware('auth:sanctum');
 
 /*
 |--------------------------------------------------------------------------
