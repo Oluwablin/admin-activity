@@ -66,3 +66,5 @@ php artisan db:seed
 ```
 
 ## Postman Collection
+
+https://documenter.getpostman.com/view/9649360/2s8ZDR75UQ
