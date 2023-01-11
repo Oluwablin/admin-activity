@@ -21,4 +21,14 @@ class Activity extends Model
         'image',
         'user_id'
     ];
+
+    /**
+     * Get a user that an activity belongs to
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

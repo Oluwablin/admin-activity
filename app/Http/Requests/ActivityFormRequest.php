@@ -36,8 +36,7 @@ class ActivityFormRequest extends FormRequest
                     }
                 }
             ],
-            'images' => ['sometimes', 'min:1', 'max:1'],
-            'images.*' => ['sometimes', 'image', 'mimes:jpg,png,jpeg,gif,svg', 'max:1024']
+            'image' => ['sometimes', 'image', 'mimes:jpg,png,jpeg,gif,svg', 'max:1024']
         ];
     }
 
@@ -53,11 +52,9 @@ class ActivityFormRequest extends FormRequest
             'title.max' => 'Activity title must not exceed 250 characters',
             'description.max' => 'Activity description must not exceed 250 characters',
             'user_id.numeric' => 'User ID must be ID of the user the activity belongs to',
-            'images.min' => 'Please add at aleast one image.',
-            'images.max' => 'You can only upload one image at a time.',
-            'images.*.image' => 'Please upload a valid image file.',
-            'images.*.mimes' => 'Please upload a valid image file e.g. .jpg, .png, .jpeg, .gif, .svg',
-            'images.*.max' => 'Image file must not exceed 1mb file size.'
+            'image.image' => 'Please upload a valid image file.',
+            'image.mimes' => 'Please upload a valid image file e.g. .jpg, .png, .jpeg, .gif, .svg',
+            'image.max' => 'Image file must not exceed 1mb file size.'
         ];
     }
 }

@@ -35,10 +35,11 @@ class ActivityController extends Controller
         $start_date = $request->filled('start_date') ?  date('Y-m-d 00:00:00', strtotime($request->input('start_date'))) : date('1970-01-01 00:00:00');
         $end_date = $request->filled('end_date') ?  date('Y-m-d', strtotime($request->input('end_date'))) . " 23:59:59" : date('Y-m-d 23:59:59');
 
-        $activities = Activity::when($request->query('keywords'), function ($query) use ($request, $start_date, $end_date) {
-            $query->where('title', 'like', '%' . $request->keywords . '%')->orderBy('title')
-            ->whereBetween('created_at', [$start_date, $end_date]);
-        })->latest()->paginate(intVal($request->query('paginate')) ?? 10);
+        $activities = Activity::when($request->query('keywords'), function ($query) use ($request) {
+            $query->where('title', 'like', '%' . $request->keywords . '%')->orderBy('title');
+        })
+        ->whereBetween('created_at', [$start_date, $end_date])
+        ->latest()->paginate(intVal($request->query('paginate')) ?? 10);
 
         return ActivityResource::collection($activities)->additional(['status' => 'OK', 'message' => 'Activities fetched successfully.']);
     }
@@ -50,14 +51,15 @@ class ActivityController extends Controller
      * @param  ActivityFormRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function addActivity(ActivityFormRequest $request)
+    public function addNew(ActivityFormRequest $request)
     {
-        if($request->validated()['image']){
+        $activity = Activity::create($request->validated());
+        if($request->validated(['image'])){
             $imageName = time(). '.' .$request->image->getClientOriginalExtension();
             $request->image->move(public_path('upload/images'), $imageName);
+            $activity->image = $imageName;
+            $activity->save();
         }
-
-        $activity = Activity::create($request->validated());
 
         return $this->AppResponse('OK', 'Activity created successfully.', 201, new ActivityResource($activity));
     }
@@ -80,11 +82,18 @@ class ActivityController extends Controller
      * @param  \App\Models\Activity  $activity
      * @return \Illuminate\Http\Response
      */
-    public function update(ActivityFormRequest $request, $id)
+    public function updateActivity(ActivityFormRequest $request, $id)
     {
         $activity = $this->getUserActivity($id);
 
         $activity->update($request->validated());
+        
+        if($request->validated(['image'])){
+            $imageName = time(). '.' .$request->image->getClientOriginalExtension();
+            $request->image->move(public_path('upload/images'), $imageName);
+            $activity->image = $imageName;
+            $activity->save();
+        }
 
         return $this->AppResponse('OK', 'Activity updated successfully.', 200, new ActivityResource($activity));
     }
