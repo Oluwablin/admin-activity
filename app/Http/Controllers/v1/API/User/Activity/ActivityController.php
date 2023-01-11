@@ -5,82 +5,49 @@ namespace App\Http\Controllers\v1\API\User\Activity;
 use App\Models\Activity;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ActivityResource;
+use App\Oluwablin\OluwablinApp;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityController extends Controller
 {
+    use OluwablinApp;
+
+    /**
+     * Get an activity to interact with
+     *
+     * @param int $id
+     *
+     * @return mixed
+     */
+    private function getUserActivity($id)
+    {
+        return Activity::find($id) ?? abort(404, 'Activity not found.');
+    } 
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function allActivities(Request $request)
     {
-        //
-    }
+        $activities = Activity::where('user_id', Auth::id())
+        ->orWhereNull('user_id')
+        ->latest()->paginate(intVal($request->query('paginate')) ?? 10);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+        return ActivityResource::collection($activities)->additional(['status' => 'OK', 'message' => 'Activities fetched successfully.']);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Activity  $activity
+     * @param  \App\Models\Activity  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Activity $activity)
+    public function getActivity($id)
     {
-        //
+        return $this->AppResponse('OK', 'Activity details fetched successfully', 200, new ActivityResource($this->getUserActivity($id)));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Activity  $activity
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Activity $activity)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Activity  $activity
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Activity $activity)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Activity  $activity
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Activity $activity)
-    {
-        //
-    }
 }

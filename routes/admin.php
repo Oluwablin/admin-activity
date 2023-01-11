@@ -46,10 +46,8 @@ Route::prefix('v1/admin')->group(function() {
                 Route::get('/', 'allActivities')->name('get-all');
                 Route::post('/', 'addNew')->name('add-new');
                 Route::get('/{id}', 'getActivity')->name('get-one');
-                Route::put('/{id}', 'updateActivity')->name('update');
+                Route::post('/{id}', 'updateActivity')->name('update');
                 Route::delete('/{id}', 'deleteActivity')->name('delete');
-                Route::post('/{id}/image', 'uploadImage')->name('upload-image');
-                Route::delete('/{id}/image', 'deleteImage')->name('delete-image');
             });
         });
     });
